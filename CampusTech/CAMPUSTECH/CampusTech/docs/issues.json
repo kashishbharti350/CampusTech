@@ -1,0 +1,213 @@
+[
+  {
+    "title": "Modal is too tall on small phones",
+    "labels": [
+      "bug",
+      "design"
+    ],
+    "body": "## Why\nThe details modal now holds details, rounds, tracker, checklist and buttons, so on a 360px-wide phone users must scroll a long way to reach Close.\n\n## Acceptance criteria\n- [ ] Close button stays visible (sticky header or footer)\n- [ ] Checklist and rounds can be collapsed\n- [ ] Tested at 360x640 and 768x1024\n"
+  },
+  {
+    "title": "Add browser-level automated tests (Playwright)",
+    "labels": [
+      "testing"
+    ],
+    "body": "## Why\nCurrent tests cover pure logic only. Search, filters, modal, saving and theme are verified by hand.\n\n## Acceptance criteria\n- [ ] Tests for search + category + sort\n- [ ] Tests for save, refresh, saved-only\n- [ ] Modal closes with button, backdrop and Esc\n- [ ] Runs in CI\n"
+  },
+  {
+    "title": "Accessibility audit (WCAG 2.2 AA)",
+    "labels": [
+      "accessibility"
+    ],
+    "body": "## Why\nMany new interactive parts were added (toasts, modal extras, tracker, bars).\n\n## Acceptance criteria\n- [ ] Contrast checked in light and dark themes\n- [ ] Screen reader pass (NVDA or VoiceOver) on modal, toasts and forms\n- [ ] Focus returns to the opener when the modal closes\n- [ ] Dashboard bars have text equivalents\n- [ ] Document the results in docs/a11y.md\n"
+  },
+  {
+    "title": "Keep filters and sort in the URL",
+    "labels": [
+      "enhancement"
+    ],
+    "body": "## Why\nUsers cannot share or bookmark a filtered view.\n\n## Acceptance criteria\n- [ ] Search, category, filters and sort are written to the query string\n- [ ] Opening a URL restores the same view\n- [ ] Reset filters clears the URL\n"
+  },
+  {
+    "title": "Export and import my data as JSON",
+    "labels": [
+      "enhancement"
+    ],
+    "body": "## Why\nEverything lives in localStorage, so clearing the browser loses it.\n\n## Acceptance criteria\n- [ ] Export button downloads one JSON file\n- [ ] Import validates data with the existing sanitize functions\n- [ ] Clear error message for invalid files\n"
+  },
+  {
+    "title": "Add a Clear all my data button",
+    "labels": [
+      "enhancement",
+      "privacy"
+    ],
+    "body": "## Why\nUsers should be able to wipe locally stored data.\n\n## Acceptance criteria\n- [ ] Confirmation dialog explains what is deleted\n- [ ] Removes saved, custom, tracker, checklist, profile, team and theme keys\n- [ ] Toast confirms\n"
+  },
+  {
+    "title": "Move sample data to data/events.json",
+    "labels": [
+      "refactor"
+    ],
+    "body": "## Why\nSample data is hard-coded in events.js. A JSON file is easier to edit and closer to a future API.\n\n## Acceptance criteria\n- [ ] Loaded with fetch and a clear loading and error state\n- [ ] Works on GitHub Pages\n- [ ] README explains that file:// needs Live Server\n"
+  },
+  {
+    "title": "Pagination or Load more for long lists",
+    "labels": [
+      "performance"
+    ],
+    "body": "## Why\nRendering every card at once will not scale beyond a few hundred listings.\n\n## Acceptance criteria\n- [ ] 12 cards per page with a Load more button\n- [ ] Result count stays accurate\n- [ ] Focus is managed for keyboard users\n"
+  },
+  {
+    "title": "Friendly error screen if scripts fail to load",
+    "labels": [
+      "robustness"
+    ],
+    "body": "## Why\nIf a script is missing, the page looks empty with no explanation.\n\n## Acceptance criteria\n- [ ] Visible message with a reload tip\n- [ ] Console logs the real error\n"
+  },
+  {
+    "title": "Add ESLint and Prettier",
+    "labels": [
+      "devops"
+    ],
+    "body": "## Why\nKeep code style consistent as contributors join.\n\n## Acceptance criteria\n- [ ] Config files committed\n- [ ] npm run lint passes\n- [ ] Lint runs in the GitHub Actions workflow\n"
+  },
+  {
+    "title": "Set up GitHub Pages deployment notes and badge",
+    "labels": [
+      "documentation"
+    ],
+    "body": "## Why\nMake it obvious how to run and see the live demo.\n\n## Acceptance criteria\n- [ ] README shows the live URL and a test status badge\n- [ ] CONTRIBUTING.md explains branches and pull requests\n"
+  },
+  {
+    "title": "Organizer profile pages and Follow organizer",
+    "labels": [
+      "enhancement",
+      "unstop-parity"
+    ],
+    "body": "## Why\nStudents follow clubs and companies, not only single events.\n\n## Acceptance criteria\n- [ ] Clicking an organizer shows all their listings\n- [ ] Follow stores a local list\n- [ ] For you shows listings from followed organizers\n"
+  },
+  {
+    "title": "Gamification: XP, badges and a local leaderboard",
+    "labels": [
+      "enhancement",
+      "unstop-parity"
+    ],
+    "body": "## Why\nProgress rewards keep students coming back.\n\n## Acceptance criteria\n- [ ] XP for saving, tracking, finishing checklists and applying\n- [ ] Badges (First Save, Checklist Master, and so on)\n- [ ] Leaderboard is labelled local-only until a backend exists\n"
+  },
+  {
+    "title": "Practice quizzes and mock tests",
+    "labels": [
+      "enhancement",
+      "unstop-parity"
+    ],
+    "body": "## Why\nStudents prepare for contests and placements on the same site.\n\n## Acceptance criteria\n- [ ] At least 3 topics with 10 questions each\n- [ ] Score summary and review of wrong answers\n- [ ] Best scores stored locally\n"
+  },
+  {
+    "title": "Mentorship listings and request form (demo)",
+    "labels": [
+      "enhancement",
+      "unstop-parity"
+    ],
+    "body": "## Why\nMentorship is a core category on competing platforms.\n\n## Acceptance criteria\n- [ ] Mentor cards with topics and availability (clearly fictional)\n- [ ] Request form with validation\n- [ ] Clearly marked demo until a backend exists\n"
+  },
+  {
+    "title": "Separate Jobs and Internships with stipend and duration",
+    "labels": [
+      "enhancement",
+      "unstop-parity"
+    ],
+    "body": "## Why\nCareer listings need fields that competitions do not.\n\n## Acceptance criteria\n- [ ] New fields: stipend, duration, location, skills required\n- [ ] Filters for stipend range and duration\n- [ ] Add form supports them\n"
+  },
+  {
+    "title": "Eligibility filters (year, degree, branch)",
+    "labels": [
+      "enhancement",
+      "unstop-parity"
+    ],
+    "body": "## Why\nStudents want only what they are allowed to apply to.\n\n## Acceptance criteria\n- [ ] Structured eligibility data instead of free text\n- [ ] Filter by year, degree and branch\n- [ ] Profile can prefill the filters\n"
+  },
+  {
+    "title": "Compare up to 3 opportunities side by side",
+    "labels": [
+      "enhancement",
+      "unstop-parity"
+    ],
+    "body": "## Why\nHelps students choose between similar events.\n\n## Acceptance criteria\n- [ ] Compare checkbox on cards\n- [ ] Comparison table with prize, team size, deadline, level, cost\n- [ ] Accessible table markup\n"
+  },
+  {
+    "title": "Reminders: browser notifications and bulk calendar export",
+    "labels": [
+      "enhancement",
+      "unstop-parity"
+    ],
+    "body": "## Why\nSingle-event calendar export exists. Students also want reminders for everything they saved.\n\n## Acceptance criteria\n- [ ] Export all saved deadlines as one .ics file\n- [ ] Optional Notification API reminders 1 day before (works only while the site is open, say so in the UI)\n"
+  },
+  {
+    "title": "Student profile and printable resume page",
+    "labels": [
+      "enhancement",
+      "unstop-parity"
+    ],
+    "body": "## Why\nProfiles are central on competing platforms.\n\n## Acceptance criteria\n- [ ] Profile form: name, college, skills, links, achievements\n- [ ] Print-friendly resume view\n- [ ] All data stays local\n"
+  },
+  {
+    "title": "Trending, Featured and Recently added rows",
+    "labels": [
+      "enhancement",
+      "unstop-parity"
+    ],
+    "body": "## Why\nDiscovery should highlight more than the nearest deadline.\n\n## Acceptance criteria\n- [ ] Featured flag on listings\n- [ ] Recently added from creation date\n- [ ] Rows appear above the main grid\n"
+  },
+  {
+    "title": "PWA: installable and works offline",
+    "labels": [
+      "enhancement"
+    ],
+    "body": "## Why\nStudents use phones with weak connections.\n\n## Acceptance criteria\n- [ ] Web app manifest and icons\n- [ ] Service worker caches the app shell\n- [ ] Lighthouse PWA checks pass\n"
+  },
+  {
+    "title": "Open Graph and SEO meta tags",
+    "labels": [
+      "enhancement"
+    ],
+    "body": "## Why\nShared links should preview nicely.\n\n## Acceptance criteria\n- [ ] Title, description and og:image\n- [ ] Lighthouse SEO score 90 or higher\n"
+  },
+  {
+    "title": "Hindi language support (i18n)",
+    "labels": [
+      "enhancement"
+    ],
+    "body": "## Why\nReach more students.\n\n## Acceptance criteria\n- [ ] All visible text moved into a translations file\n- [ ] Language switcher remembered locally\n"
+  },
+  {
+    "title": "Accounts and cloud sync (Supabase or Firebase)",
+    "labels": [
+      "backend",
+      "unstop-parity"
+    ],
+    "body": "## Why\nEverything is per-browser today. Real accounts allow syncing across devices.\n\n## Acceptance criteria\n- [ ] Email or Google sign-in\n- [ ] Saved events, tracker and profile sync\n- [ ] Row-level security so users only see their own data\n- [ ] Local mode still works when logged out\n"
+  },
+  {
+    "title": "Organizer submission and admin approval flow",
+    "labels": [
+      "backend",
+      "unstop-parity"
+    ],
+    "body": "## Why\nVerified listings are the main trust factor. Fictional sample data must be replaced.\n\n## Acceptance criteria\n- [ ] Organizers submit listings with an official link\n- [ ] Admins approve or reject\n- [ ] Only approved listings are public and show a Verified badge\n"
+  },
+  {
+    "title": "Real team finder with matching and messaging",
+    "labels": [
+      "backend",
+      "unstop-parity"
+    ],
+    "body": "## Why\nThe current team finder is a local demo that no one else can see.\n\n## Acceptance criteria\n- [ ] Posts are shared between users\n- [ ] Request-to-join flow\n- [ ] Basic abuse reporting\n"
+  },
+  {
+    "title": "Email or push digests of upcoming deadlines",
+    "labels": [
+      "backend"
+    ],
+    "body": "## Why\nReminders must work when the site is closed.\n\n## Acceptance criteria\n- [ ] Opt-in digest with unsubscribe\n- [ ] Weekly summary of saved and tracked deadlines\n"
+  }
+]

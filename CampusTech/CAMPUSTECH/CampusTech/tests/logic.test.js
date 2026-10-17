@@ -19,7 +19,7 @@ const ft = vm.createContext({ console: console, URL: URL });  // events.js + fea
 const runF = function (code) { return vm.runInContext(code, ft); };
 const run = function (code) { return vm.runInContext(code, ev); };
 const goodEvent = { id: "user-1", source: "user", title: "My Event", category: "Workshops", mode: "Online",
-  deadline: "2030-01-15", description: "A long enough description.", url: "https://example.com", skills: ["Git"], eligibility: "All", level: "Beginner", cost: "Free", registration: "open" };
+  deadline: "2030-01-15", description: "A long enough description.", url: "https://example.com", skills: ["Git"], eligibility: "All", level: "Beginner", cost: "Free", registration: "open", organizer: "Club", prize: 0, teamSize: "Solo", rounds: ["One"] };
 
 test("daysFromToday / getDaysLeft agree (+5, 0, -3)", function () {
   assert.strictEqual(ev.getDaysLeft(ev.daysFromToday(5)), 5);
@@ -176,6 +176,31 @@ test("team posts: validation, limits and stored-data checks", function () {
 });
 test("resources: https links only, each with tags", function () {
   runF("RESOURCES").forEach(function (r) { assert.ok(r.url.startsWith("https://") && r.tags.length && r.title); });
+});
+
+// ---- Unstop-style batch ----
+test("prize formatting and parsing", function () {
+  assert.strictEqual(ev.formatPrize(0), "No prize listed");
+  assert.strictEqual(ev.formatPrize(100000), "\u20B91,00,000");
+  assert.strictEqual(ev.parsePrize("abc"), 0); assert.strictEqual(ev.parsePrize("-5"), 0); assert.strictEqual(ev.parsePrize("999999999"), 10000000);
+});
+test("demo events have organizer, team size, rounds; prize filter and tampered prize", function () {
+  demos.forEach(function (d) { assert.ok(d.organizer && d.teamSize && Number.isInteger(d.prize) && Array.isArray(d.rounds) && d.rounds.length); });
+  assert.strictEqual(ids({ prizeOnly: true }), "demo-1,demo-2,demo-6,demo-7");
+  assert.strictEqual(ev.isValidEvent(Object.assign({}, goodEvent, { prize: "1000" })), false);
+  assert.strictEqual(ev.isValidEvent(Object.assign({}, goodEvent, { rounds: "x" })), false);
+});
+test("calendar file: all-day deadline, next-day end, escaping, valid shape", function () {
+  const ics = ev.buildIcs({ id: "demo-1", title: "A, B; C", category: "Hackathons", mode: "Online", deadline: "2026-12-31", source: "demo", url: "" }, new Date("2026-10-17T08:30:00Z"));
+  assert.ok(ics.startsWith("BEGIN:VCALENDAR\r\n") && ics.endsWith("END:VCALENDAR\r\n"));
+  assert.ok(ics.includes("DTSTART;VALUE=DATE:20261231") && ics.includes("DTEND;VALUE=DATE:20270101"));
+  assert.ok(ics.includes("DTSTAMP:20261017T083000Z") && ics.includes("SUMMARY:Deadline: A\\, B\\; C"));
+  assert.ok(ics.includes("Sample listing") && !ics.includes("Apply:"));
+});
+test("skill typo suggestions", function () {
+  const known = ["Arduino", "Python", "Git", "JavaScript"];
+  same(ft.suggestSkills(["arduin", "python", "Go", "xylophone"], known), [{ typed: "arduin", suggestion: "Arduino" }, { typed: "Go", suggestion: null }, { typed: "xylophone", suggestion: null }]);
+  assert.strictEqual(ft.editDistance("kitten", "sitting"), 3);
 });
 
 console.log("\nAll " + passed + " tests passed.");

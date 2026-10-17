@@ -127,3 +127,30 @@ const RESOURCES = [
   { title: "CP-Algorithms", url: "https://cp-algorithms.com/", tags: ["Algorithms", "Contests"], note: "Explained algorithms for competitive programming." },
   { title: "Arduino Learn", url: "https://docs.arduino.cc/learn/", tags: ["Arduino", "IoT", "Embedded"], note: "Official tutorials for Arduino boards." }
 ];
+
+// ---- "Did you mean?" for skill typos ----
+function editDistance(a, b) {
+  a = a.toLowerCase(); b = b.toLowerCase();
+  const row = [];
+  for (let j = 0; j <= b.length; j++) row[j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    let prev = row[0];
+    row[0] = i;
+    for (let j = 1; j <= b.length; j++) {
+      const old = row[j];
+      row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a[i - 1] === b[j - 1] ? 0 : 1));
+      prev = old;
+    }
+  }
+  return row[b.length];
+}
+// For each profile skill that no listing mentions, find the closest known skill (if any is close enough).
+function suggestSkills(profileSkills, knownSkills) {
+  const known = knownSkills.map(function (s) { return s.toLowerCase(); });
+  return profileSkills.filter(function (s) { return !known.includes(s.toLowerCase()); }).map(function (typed) {
+    const limit = Math.max(1, Math.floor(typed.length / 3));
+    let best = null, bestDistance = limit + 1;
+    knownSkills.forEach(function (k) { const d = editDistance(typed, k); if (d < bestDistance) { bestDistance = d; best = k; } });
+    return { typed: typed, suggestion: best };
+  });
+}

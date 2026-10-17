@@ -64,6 +64,7 @@
         <select id="sortSelect">
           <option value="deadline-asc">Earliest deadline</option>
           <option value="deadline-desc">Latest deadline</option>
+          <option value="prize">Highest prize</option>
           <option value="name">Name (A to Z)</option>
         </select>
 
@@ -88,6 +89,7 @@
           <select id="filterSkill"><option value="All">Any skill</option></select>
         </label>
         <label class="check"><input id="closingSoon" type="checkbox"> Closing within 7 days</label>
+        <label class="check"><input id="hasPrize" type="checkbox"> Has a prize</label>
       </div>
 
       <!-- Category buttons: data-category is read by JavaScript -->
@@ -160,6 +162,14 @@
         <div class="field">
           <label for="costInput">Cost</label>
           <select id="costInput"><option>Not specified</option><option>Free</option><option>Paid</option></select>
+        </div>
+        <div class="field">
+          <label for="organizerInput">Organizer (optional)</label>
+          <input id="organizerInput" type="text" maxlength="60" placeholder="Your club or company">
+        </div>
+        <div class="field">
+          <label for="prizeInput">Prize in rupees (optional)</label>
+          <input id="prizeInput" type="number" min="0" max="10000000" step="1" placeholder="0">
         </div>
         <div class="field full">
           <label for="descriptionInput">Description * (at least 20 characters)</label>

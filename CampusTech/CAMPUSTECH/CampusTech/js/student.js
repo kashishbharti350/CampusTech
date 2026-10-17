@@ -17,6 +17,7 @@ function modalExtras(event) {
   const items = getChecklistItems(event);
   return `
     <hr class="rule">
+    ${event.rounds.length ? '<h4>Rounds</h4><ol class="rounds">' + event.rounds.map(function (r) { return "<li>" + escapeHtml(r) + "</li>"; }).join("") + "</ol>" : ""}
     <label for="trackSelect"><strong>Application status</strong> (tracked by you, in this browser)</label>
     <select id="trackSelect" data-id="${id}">
       <option value="">Not tracking</option>
@@ -28,7 +29,8 @@ function modalExtras(event) {
         return `<li><label><input type="checkbox" data-id="${id}" data-check="${i}"${done.includes(i) ? " checked" : ""}> ${escapeHtml(text)}</label></li>`;
       }).join("")}
     </ul>
-    <button class="btn btn-outline btn-small" type="button" data-action="share" data-id="${id}">Share this opportunity</button>`;
+    <div class="actions"><button class="btn btn-outline btn-small" type="button" data-action="ics" data-id="${id}">Add deadline to calendar</button>
+    <button class="btn btn-outline btn-small" type="button" data-action="share" data-id="${id}">Share this opportunity</button></div>`;
 }
 
 modalBody.addEventListener("change", function (e) {
@@ -48,7 +50,10 @@ modalBody.addEventListener("change", function (e) {
 
 modalBody.addEventListener("click", function (e) {
   const button = e.target.closest("button");
-  if (button && button.dataset.action === "share" && findEvent(button.dataset.id)) shareEvent(findEvent(button.dataset.id));
+  const target = button && findEvent(button.dataset.id);
+  if (!target) return;
+  if (button.dataset.action === "share") shareEvent(target);
+  if (button.dataset.action === "ics") downloadIcs(target);
 });
 
 function setStatus(id, value) {
@@ -72,6 +77,20 @@ async function shareEvent(event) {
   } catch (error) {
     window.prompt("Copy this text:", text);
   }
+}
+
+// ---------- Calendar download (.ics): opens in Google, Outlook or Apple Calendar ----------
+function downloadIcs(event) {
+  const blob = new Blob([buildIcs(event)], { type: "text/calendar;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "campustech-" + event.id.replace(/[^a-z0-9-]/gi, "") + ".ics";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  showToast("Calendar file downloaded.", "success");
 }
 
 // ---------- For you: interests + recommendations ----------
@@ -205,8 +224,21 @@ function renderDashboard() {
     <div><h3>Your applications</h3>${barRows(s.byStatus, Math.max(1, s.tracked))}</div></div>`;
 }
 
+// Skill typo help: "arduin" -> "Did you mean Arduino?"
+function renderSkillHint() {
+  const known = [];
+  getAllEvents().forEach(function (e) { e.skills.forEach(function (s) { if (s !== "Not specified" && !known.includes(s)) known.push(s); }); });
+  byId("recommendations").insertAdjacentHTML("beforeend", suggestSkills(profile.skills, known).map(function (i) {
+    const typed = escapeHtml(i.typed);
+    return i.suggestion
+      ? `<p class="notice skill-hint">No listing mentions "${typed}". Did you mean <button class="btn btn-outline btn-small" type="button" data-fixskill="${typed}" data-to="${escapeHtml(i.suggestion)}">${escapeHtml(i.suggestion)}</button>?</p>`
+      : `<p class="notice skill-hint">No listing mentions "${typed}" yet.</p>`;
+  }).join(""));
+}
+
 function renderStudent() {
   renderRecommendations();
+  renderSkillHint();
   renderTracker();
   renderDashboard();
 }
@@ -221,5 +253,13 @@ renderStudent();
   byId(id).addEventListener("click", function (e) {
     const button = e.target.closest("button");
     if (button && button.dataset.action === "details") openDetails(button.dataset.id);
+    if (button && button.dataset.fixskill) {
+      profile.skills = profile.skills.map(function (s) { return s === button.dataset.fixskill ? button.dataset.to : s; });
+      profile = sanitizeProfile(profile);
+      saveToStorage(profileKey, profile);
+      renderProfileForm();
+      renderStudent();
+      showToast("Skill corrected.", "success");
+    }
   });
 });

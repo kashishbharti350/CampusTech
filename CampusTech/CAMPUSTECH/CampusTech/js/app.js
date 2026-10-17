@@ -26,6 +26,7 @@ const filterCost = document.getElementById("filterCost");
 const filterSkill = document.getElementById("filterSkill");
 const closingSoonInput = document.getElementById("closingSoon");
 const upcomingList = document.getElementById("upcomingList");
+const hasPrizeInput = document.getElementById("hasPrize");
 
 // =====================================================
 // 4. HELPER FUNCTIONS
@@ -50,13 +51,14 @@ function getVisibleEvents() {
   const results = filterEvents(getAllEvents(), {
     category: selectedCategory, search: searchInput.value, savedOnly: showSavedOnly, savedIds: savedIds,
     hideExpired: hideExpired, mode: filterMode.value, level: filterLevel.value, cost: filterCost.value,
-    skill: filterSkill.value, closingSoon: closingSoonInput.checked
+    skill: filterSkill.value, closingSoon: closingSoonInput.checked, prizeOnly: hasPrizeInput.checked
   });
 
   // sort() reorders the list. Dates like "2026-10-20" sort correctly as text.
   const sortChoice = sortSelect.value;
   results.sort(function (a, b) {
     if (sortChoice === "deadline-asc") return compareByDeadline(a, b);
+    if (sortChoice === "prize") return (b.prize - a.prize) || compareByDeadline(a, b);
     if (sortChoice === "deadline-desc") return b.deadline.localeCompare(a.deadline);
     return a.title.localeCompare(b.title);
   });
@@ -81,7 +83,7 @@ function createCardHtml(event) {
         <span class="tag status status-${registration.cssClass}">${registration.text}</span>
       </div>
       <h3>${escapeHtml(event.title)}</h3>
-      <p class="meta">Mode: ${escapeHtml(event.mode)} | Level: ${escapeHtml(event.level)} | Cost: ${escapeHtml(event.cost)}<br>Deadline: ${escapeHtml(event.deadline)}</p>
+      <p class="meta">Mode: ${escapeHtml(event.mode)} | Level: ${escapeHtml(event.level)} | Cost: ${escapeHtml(event.cost)}<br>Deadline: ${escapeHtml(event.deadline)}<br>Prize: ${formatPrize(event.prize)} | Team: ${escapeHtml(event.teamSize)}<br>By ${escapeHtml(event.organizer)}</p>
       <p class="deadline ${deadlineInfo.cssClass}">${deadlineInfo.text}</p>
       <p>${escapeHtml(event.description)}</p>
       <div class="card-actions">
@@ -153,6 +155,9 @@ function openDetails(eventId) {
       <dt>Deadline</dt><dd>${escapeHtml(event.deadline)} (${deadlineInfo.text})</dd>
       <dt>Skills</dt><dd>${escapeHtml(event.skills.join(", "))}</dd>
       <dt>Eligibility</dt><dd>${escapeHtml(event.eligibility)}</dd>
+      <dt>Organizer</dt><dd>${escapeHtml(event.organizer)}</dd>
+      <dt>Prize</dt><dd>${formatPrize(event.prize)}${event.source === "demo" && event.prize > 0 ? " (sample figure)" : ""}</dd>
+      <dt>Team size</dt><dd>${escapeHtml(event.teamSize)}</dd>
       <dt>Application</dt><dd>${linkHtml}</dd>
     </dl>`;
   if (typeof modalExtras === "function") modalBody.innerHTML += modalExtras(event);  // tracker, checklist, share (student.js)
@@ -204,6 +209,10 @@ function handleFormSubmit(submitEvent) {
     level: document.getElementById("levelInput").value,
     cost: document.getElementById("costInput").value,
     registration: "open",
+    organizer: document.getElementById("organizerInput").value.trim().slice(0, 60) || "Added by you",
+    prize: parsePrize(document.getElementById("prizeInput").value),
+    teamSize: "Not specified",
+    rounds: [],
     skills: parseSkills(document.getElementById("skillsInput").value),
     eligibility: "Not specified"
   });
@@ -254,7 +263,7 @@ function setCategory(category) {
 function hasActiveFilters() {
   return searchInput.value.trim() !== "" || selectedCategory !== "All" || showSavedOnly || hideExpired ||
     filterMode.value !== "All" || filterLevel.value !== "All" || filterCost.value !== "All" ||
-    filterSkill.value !== "All" || closingSoonInput.checked;
+    filterSkill.value !== "All" || closingSoonInput.checked || hasPrizeInput.checked;
 }
 
 function resetFilters() {
@@ -263,6 +272,7 @@ function resetFilters() {
   hideExpiredInput.checked = false;
   [filterMode, filterLevel, filterCost, filterSkill].forEach(function (select) { select.value = "All"; });
   closingSoonInput.checked = false;
+  hasPrizeInput.checked = false;
   showSavedOnly = false;
   savedToggle.setAttribute("aria-pressed", "false");
   setCategory("All");
@@ -319,7 +329,7 @@ function renderUpcoming() {
     : '<p class="notice">Nothing closes in the next 7 days. Check the full list below.</p>';
 }
 
-[filterMode, filterLevel, filterCost, filterSkill, closingSoonInput].forEach(function (control) {
+[filterMode, filterLevel, filterCost, filterSkill, closingSoonInput, hasPrizeInput].forEach(function (control) {
   control.addEventListener("change", renderEvents);
 });
 

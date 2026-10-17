@@ -6,7 +6,7 @@ A responsive web app that helps students find hackathons, coding contests, works
 
 ## Features
 
-**Discovery:** search (title, category, skills, description), category chips, filters for mode, level, free/paid, skill, closing within 7 days and hide expired, sorting, reset filters, deadline countdowns, registration status, an upcoming-deadlines section, details modal, add your own opportunity (validated).
+**Discovery:** search (title, category, skills, description), category chips, filters for mode, level, free/paid, skill, closing within 7 days and hide expired, sorting, reset filters, deadline countdowns, registration status, an upcoming-deadlines section, details modal, add your own opportunity (validated), organizer, prize, team size and rounds on each listing, prize filter and sort, add-deadline-to-calendar (.ics), and "did you mean" help for skill typos.
 
 **Student tools:** interests and recommendations ("why recommended"), application tracker, per-event preparation checklist, share button, team finder, learning resources, statistics dashboard, light and dark themes, toast messages.
 
@@ -32,9 +32,16 @@ CampusTech/
 │   ├── app.js        discovery page: render, filters, modal, form, theme
 │   └── student.js    interests, tracker, teams, resources, dashboard
 ├── tests/logic.test.js
+├── docs/             issues.json and ISSUES.md (the GitHub issue list)
+├── scripts/create-issues.js
+├── .github/          issue templates and the test workflow
 ├── package.json
 └── README.md
 ```
+
+## Upload the issues to GitHub
+
+Install the [GitHub CLI](https://cli.github.com/), run `gh auth login`, then from the project folder: `node scripts/create-issues.js --dry-run` to preview and `node scripts/create-issues.js` to create them.
 
 ## Run it
 

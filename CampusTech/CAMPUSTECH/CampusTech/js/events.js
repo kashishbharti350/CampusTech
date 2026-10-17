@@ -21,28 +21,28 @@ function daysFromToday(numberOfDays) {
 // To add a real opportunity, copy one object, set source: "real"
 // and paste a verified link into url.
 const demoEvents = [
-  { id: "demo-1", source: "demo", level: "Beginner", cost: "Free", registration: "open", title: "Demo Hack Sprint", category: "Hackathons", mode: "Online", deadline: daysFromToday(5),
+  { id: "demo-1", source: "demo", level: "Beginner", cost: "Free", registration: "open", organizer: "Demo Coding Club", prize: 50000, teamSize: "2 to 4", rounds: ["Idea submission", "Online build round", "Final demo"], title: "Demo Hack Sprint", category: "Hackathons", mode: "Online", deadline: daysFromToday(5),
     description: "A fictional 24-hour hackathon where teams build a small app that solves a campus problem.",
     skills: ["JavaScript", "Teamwork", "Prototyping"], eligibility: "Open to all undergraduate students.", url: "" },
-  { id: "demo-2", source: "demo", level: "Intermediate", cost: "Free", registration: "open", title: "Demo Code Clash", category: "Coding Contests", mode: "Online", deadline: daysFromToday(12),
+  { id: "demo-2", source: "demo", level: "Intermediate", cost: "Free", registration: "open", organizer: "Demo Algo Society", prize: 25000, teamSize: "Solo", rounds: ["Qualifier", "Final contest"], title: "Demo Code Clash", category: "Coding Contests", mode: "Online", deadline: daysFromToday(12),
     description: "A fictional timed contest with algorithm and problem-solving questions.",
     skills: ["C++", "Python", "Algorithms"], eligibility: "Any year, any branch.", url: "" },
-  { id: "demo-3", source: "demo", level: "Beginner", cost: "Paid", registration: "open", title: "Demo Embedded Systems Workshop", category: "Workshops", mode: "Offline", deadline: daysFromToday(20),
+  { id: "demo-3", source: "demo", level: "Beginner", cost: "Paid", registration: "open", organizer: "Demo Robotics Society", prize: 0, teamSize: "Solo", rounds: ["Workshop day"], title: "Demo Embedded Systems Workshop", category: "Workshops", mode: "Offline", deadline: daysFromToday(20),
     description: "A fictional hands-on workshop on microcontrollers, sensors and simple circuits.",
     skills: ["Arduino", "C", "Electronics"], eligibility: "ECE and EEE students, beginners welcome.", url: "" },
-  { id: "demo-4", source: "demo", level: "Intermediate", cost: "Free", registration: "open", title: "Demo IoT Internship", category: "Internships", mode: "Hybrid", deadline: daysFromToday(30),
+  { id: "demo-4", source: "demo", level: "Intermediate", cost: "Free", registration: "open", organizer: "Demo Career Cell", prize: 0, teamSize: "Solo", rounds: ["Application review", "Interview"], title: "Demo IoT Internship", category: "Internships", mode: "Hybrid", deadline: daysFromToday(30),
     description: "A fictional summer internship building small IoT prototypes with a mentor.",
     skills: ["IoT", "Python", "Sensors"], eligibility: "Second and third year engineering students.", url: "" },
-  { id: "demo-5", source: "demo", level: "Beginner", cost: "Free", registration: "open", title: "Demo Open Source Mentorship", category: "Other Opportunities", mode: "Online", deadline: daysFromToday(45),
+  { id: "demo-5", source: "demo", level: "Beginner", cost: "Free", registration: "open", organizer: "Demo Open Source Club", prize: 0, teamSize: "Solo", rounds: ["Application", "Mentor matching"], title: "Demo Open Source Mentorship", category: "Other Opportunities", mode: "Online", deadline: daysFromToday(45),
     description: "A fictional program that pairs beginners with mentors to make first open-source contributions.",
     skills: ["Git", "GitHub", "Documentation"], eligibility: "Beginners with basic programming knowledge.", url: "" },
-  { id: "demo-6", source: "demo", level: "Intermediate", cost: "Paid", registration: "waitlist", title: "Demo AI Build Weekend", category: "Hackathons", mode: "Offline", deadline: daysFromToday(2),
+  { id: "demo-6", source: "demo", level: "Intermediate", cost: "Paid", registration: "waitlist", organizer: "Demo AI Club", prize: 100000, teamSize: "3 to 5", rounds: ["Registration", "Build weekend", "Judging"], title: "Demo AI Build Weekend", category: "Hackathons", mode: "Offline", deadline: daysFromToday(2),
     description: "A fictional weekend event to build a simple machine learning project in teams of up to four.",
     skills: ["Python", "Machine Learning", "Presentation"], eligibility: "Teams of 2 to 4 students.", url: "" },
-  { id: "demo-7", source: "demo", level: "Advanced", cost: "Free", registration: "open", title: "Demo Algorithm Cup", category: "Coding Contests", mode: "Online", deadline: daysFromToday(-3),
+  { id: "demo-7", source: "demo", level: "Advanced", cost: "Free", registration: "open", organizer: "Demo Algo Society", prize: 15000, teamSize: "Solo", rounds: ["Single round"], title: "Demo Algorithm Cup", category: "Coding Contests", mode: "Online", deadline: daysFromToday(-3),
     description: "A fictional contest whose deadline has already passed, shown to test the expired style.",
     skills: ["Data Structures", "Java"], eligibility: "Open to all students.", url: "" },
-  { id: "demo-8", source: "demo", level: "Beginner", cost: "Free", registration: "open", title: "Demo Web Dev Workshop", category: "Workshops", mode: "Online", deadline: daysFromToday(9),
+  { id: "demo-8", source: "demo", level: "Beginner", cost: "Free", registration: "open", organizer: "Demo Web Club", prize: 0, teamSize: "Solo", rounds: ["Workshop session"], title: "Demo Web Dev Workshop", category: "Workshops", mode: "Online", deadline: daysFromToday(9),
     description: "A fictional beginner workshop covering HTML, CSS and JavaScript by building a small page.",
     skills: ["HTML", "CSS", "JavaScript"], eligibility: "No experience needed.", url: "" }
 ];
@@ -114,6 +114,8 @@ function isValidEvent(e) {
   const text = function (v) { return typeof v === "string" && v.trim() !== ""; };
   return text(e.id) && e.source === "user" && text(e.title) && text(e.description) && text(e.eligibility)
     && CATEGORIES.includes(e.category) && MODES.includes(e.mode) && isValidDateString(e.deadline)
+    && typeof e.organizer === "string" && Number.isInteger(e.prize) && e.prize >= 0 && typeof e.teamSize === "string"
+    && Array.isArray(e.rounds) && e.rounds.every(function (r) { return typeof r === "string"; })
     && LEVELS.includes(e.level) && COSTS.includes(e.cost) && (e.registration === "open" || e.registration === "waitlist")
     && Array.isArray(e.skills) && e.skills.every(function (s) { return typeof s === "string"; })
     && (e.url === "" || isValidUrl(e.url));
@@ -123,7 +125,7 @@ function isValidEvent(e) {
 // Records saved by Stage 1 have no level/cost/registration, so give them safe defaults.
 function withDefaults(e) {
   if (!e || typeof e !== "object") return e;
-  return Object.assign({ level: "All levels", cost: "Not specified", registration: "open" }, e);
+  return Object.assign({ level: "All levels", cost: "Not specified", registration: "open", organizer: "Added by you", prize: 0, teamSize: "Not specified", rounds: [] }, e);
 }
 
 // "Python, git ,Python" -> ["Python", "git"]. Max 8 skills, 30 characters each.
@@ -159,6 +161,28 @@ function filterEvents(events, f) {
       && (f.level === "All" || event.level === f.level)
       && (f.cost === "All" || event.cost === f.cost)
       && (f.skill === "All" || event.skills.includes(f.skill))
+      && (!f.prizeOnly || event.prize > 0)
       && (!f.closingSoon || (daysLeft >= 0 && daysLeft <= 7));
   });
+}
+
+// ---------- Unstop-style details ----------
+function formatPrize(amount) {
+  return Number.isInteger(amount) && amount > 0 ? "\u20B9" + amount.toLocaleString("en-IN") : "No prize listed";
+}
+function parsePrize(text) { return Math.max(0, Math.min(10000000, parseInt(text, 10) || 0)); }
+
+// Calendar files (.ics) need \ ; , and new lines escaped.
+function icsText(text) {
+  return String(text).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+}
+// An all-day calendar entry on the deadline date.
+function buildIcs(event, now) {
+  const p = event.deadline.split("-");
+  const end = formatDate(new Date(+p[0], +p[1] - 1, +p[2] + 1)).replace(/-/g, "");
+  const stamp = (now || new Date()).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const note = event.category + " (" + event.mode + ")" + (event.source === "demo" ? ". Sample listing, not a real event." : "") + (event.url ? " Apply: " + event.url : "");
+  return ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//CampusTech//Deadline reminder//EN", "BEGIN:VEVENT",
+    "UID:" + event.id + "@campustech", "DTSTAMP:" + stamp, "DTSTART;VALUE=DATE:" + event.deadline.replace(/-/g, ""), "DTEND;VALUE=DATE:" + end,
+    "SUMMARY:" + icsText("Deadline: " + event.title), "DESCRIPTION:" + icsText(note), "END:VEVENT", "END:VCALENDAR"].join("\r\n") + "\r\n";
 }
