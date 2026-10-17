@@ -1,0 +1,7 @@
+{
+  "name": "campustech",
+  "version": "1.0.0",
+  "description": "Student opportunity discovery app (HTML, CSS, vanilla JS)",
+  "scripts": { "test": "node tests/logic.test.js" },
+  "license": "MIT"
+}

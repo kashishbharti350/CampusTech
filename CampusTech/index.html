@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusTech — Discover. Build. Compete.</title>
+  <!-- Connects this page to the stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#discover">Skip to opportunities</a>
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="#top" class="logo" aria-label="CampusTech home">
+        <span class="logo-mark" aria-hidden="true">C</span>CampusTech
+      </a>
+      <nav aria-label="Main navigation">
+        <a href="#discover">Discover</a>
+        <a href="#foryou">For you</a>
+        <a href="#tracker">Tracker</a>
+        <a href="#teams">Teams</a>
+        <a href="#resources">Resources</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#add">Add</a>
+      </nav>
+      <button id="themeToggle" class="icon-btn" type="button" aria-label="Switch to dark theme">🌙</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container">
+        <h1>Discover. Build. Compete.</h1>
+        <p class="hero-text">Hackathons, coding contests, workshops and internships, all in one place instead of scattered across group chats.</p>
+        <a class="btn btn-primary" href="#discover">Browse opportunities</a>
+
+        <!-- Numbers filled in by JavaScript -->
+        <div class="stats" aria-label="Statistics">
+          <div class="stat"><span id="statTotal" class="stat-number">0</span> opportunities</div>
+          <div class="stat"><span id="statSaved" class="stat-number">0</span> saved by you</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- UPCOMING DEADLINES (filled by renderUpcoming in app.js) -->
+    <section id="upcoming" class="container section" aria-labelledby="upcomingTitle">
+      <h2 id="upcomingTitle">Closing in the next 7 days</h2>
+      <div id="upcomingList" class="upcoming"></div>
+    </section>
+
+    <!-- DISCOVER -->
+    <section id="discover" class="container section">
+      <h2>Find your next opportunity</h2>
+      <p class="notice">Sample listings are <strong>fictional demo data</strong> and have no real application links.</p>
+
+      <div class="controls">
+        <label class="visually-hidden" for="searchInput">Search opportunities</label>
+        <input id="searchInput" type="search" placeholder="Search by title, category, skill or description">
+
+        <label class="visually-hidden" for="sortSelect">Sort opportunities</label>
+        <select id="sortSelect">
+          <option value="deadline-asc">Earliest deadline</option>
+          <option value="deadline-desc">Latest deadline</option>
+          <option value="name">Name (A to Z)</option>
+        </select>
+
+        <button id="savedToggle" class="btn btn-outline" type="button" aria-pressed="false">
+          Saved only (<span id="savedCount">0</span>)
+        </button>
+
+        <label class="check"><input id="hideExpired" type="checkbox"> Hide expired</label>
+      </div>
+
+      <div class="filters" role="group" aria-label="More filters">
+        <label class="filter">Mode
+          <select id="filterMode"><option value="All">Any mode</option><option>Online</option><option>Offline</option><option>Hybrid</option></select>
+        </label>
+        <label class="filter">Level
+          <select id="filterLevel"><option value="All">Any level</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>All levels</option></select>
+        </label>
+        <label class="filter">Cost
+          <select id="filterCost"><option value="All">Any cost</option><option>Free</option><option>Paid</option></select>
+        </label>
+        <label class="filter">Skill
+          <select id="filterSkill"><option value="All">Any skill</option></select>
+        </label>
+        <label class="check"><input id="closingSoon" type="checkbox"> Closing within 7 days</label>
+      </div>
+
+      <!-- Category buttons: data-category is read by JavaScript -->
+      <div id="categoryFilters" class="chips" role="group" aria-label="Filter by category">
+        <button class="chip active" type="button" data-category="All" aria-pressed="true">All</button>
+        <button class="chip" type="button" data-category="Hackathons" aria-pressed="false">Hackathons</button>
+        <button class="chip" type="button" data-category="Coding Contests" aria-pressed="false">Coding Contests</button>
+        <button class="chip" type="button" data-category="Workshops" aria-pressed="false">Workshops</button>
+        <button class="chip" type="button" data-category="Internships" aria-pressed="false">Internships</button>
+        <button class="chip" type="button" data-category="Other Opportunities" aria-pressed="false">Other Opportunities</button>
+      </div>
+
+      <div class="result-row">
+        <p id="resultCount" class="result-count" aria-live="polite"></p>
+        <button id="resetFilters" class="btn btn-outline btn-small" type="button" data-reset hidden>Reset filters</button>
+      </div>
+
+      <!-- Cards are inserted here by script.js -->
+      <div id="eventGrid" class="grid"></div>
+
+      <div id="emptyState" class="empty" hidden>
+        <h3>No opportunities found</h3>
+        <p>Try different words, pick another category, or clear your filters.</p>
+        <button class="btn btn-outline" type="button" data-reset>Reset filters</button>
+      </div>
+    </section>
+
+    <!-- ADD FORM -->
+    <section id="add" class="container section">
+      <h2>Add an opportunity</h2>
+      <p class="notice">Anything you add is saved only in this browser. Required fields are marked *.</p>
+
+      <form id="addForm" class="form" novalidate>
+        <div class="field">
+          <label for="titleInput">Title *</label>
+          <input id="titleInput" type="text">
+          <span class="error" id="titleError"></span>
+        </div>
+        <div class="field">
+          <label for="categoryInput">Category *</label>
+          <select id="categoryInput">
+            <option value="">Choose a category</option>
+            <option>Hackathons</option>
+            <option>Coding Contests</option>
+            <option>Workshops</option>
+            <option>Internships</option>
+            <option>Other Opportunities</option>
+          </select>
+          <span class="error" id="categoryError"></span>
+        </div>
+        <div class="field">
+          <label for="deadlineInput">Deadline *</label>
+          <input id="deadlineInput" type="date">
+          <span class="error" id="deadlineError"></span>
+        </div>
+        <div class="field">
+          <label for="modeInput">Mode *</label>
+          <select id="modeInput">
+            <option value="">Choose a mode</option>
+            <option>Online</option>
+            <option>Offline</option>
+            <option>Hybrid</option>
+          </select>
+          <span class="error" id="modeError"></span>
+        </div>
+        <div class="field">
+          <label for="levelInput">Skill level</label>
+          <select id="levelInput"><option>All levels</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>
+        </div>
+        <div class="field">
+          <label for="costInput">Cost</label>
+          <select id="costInput"><option>Not specified</option><option>Free</option><option>Paid</option></select>
+        </div>
+        <div class="field full">
+          <label for="descriptionInput">Description * (at least 20 characters)</label>
+          <textarea id="descriptionInput" rows="4"></textarea>
+          <span class="error" id="descriptionError"></span>
+        </div>
+        <div class="field full">
+          <label for="skillsInput">Skills (optional, separate with commas)</label>
+          <input id="skillsInput" type="text" maxlength="200" placeholder="Python, Git, Teamwork">
+        </div>
+        <div class="field full">
+          <label for="urlInput">Application URL (optional, must start with http:// or https://)</label>
+          <input id="urlInput" type="text" placeholder="https://example.com/apply">
+          <span class="error" id="urlError"></span>
+        </div>
+        <div class="full">
+          <button class="btn btn-primary" type="submit">Add opportunity</button>
+          <p id="formMessage" class="form-message" role="status"></p>
+        </div>
+      </form>
+    </section>
+
+    <!-- FOR YOU -->
+    <section id="foryou" class="container section" aria-labelledby="foryouTitle">
+      <h2 id="foryouTitle">For you</h2>
+      <p class="notice">Works locally: recommendations are scored in your browser from what you choose here, and saved only on this device.</p>
+      <form id="profileForm" class="form" novalidate>
+        <fieldset class="field full"><legend>Your interests</legend><div id="interestChecks" class="checks"></div></fieldset>
+        <div class="field"><label for="profileSkills">Your skills (comma separated)</label><input id="profileSkills" type="text" maxlength="200" placeholder="Python, Git, Arduino"></div>
+        <div class="field"><label for="profileLevel">Your level</label>
+          <select id="profileLevel"><option>All levels</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div>
+        <div class="full actions"><button class="btn btn-primary" type="submit">Update recommendations</button><button id="clearProfile" class="btn btn-outline" type="button">Clear</button></div>
+      </form>
+      <div id="recommendations" class="stack" aria-live="polite"></div>
+    </section>
+
+    <!-- TRACKER -->
+    <section id="tracker" class="container section" aria-labelledby="trackerTitle">
+      <h2 id="trackerTitle">Application tracker</h2>
+      <p class="notice">Works locally: you update statuses by hand to organize yourself. CampusTech never submits applications for you. Open an opportunity and pick a status to start tracking.</p>
+      <div id="trackerList" class="stack"></div>
+    </section>
+
+    <!-- TEAMS -->
+    <section id="teams" class="container section" aria-labelledby="teamsTitle">
+      <h2 id="teamsTitle">Team finder</h2>
+      <p class="notice"><strong>Demo only:</strong> posts are saved in this browser and no one else can see them. Real team matching needs accounts and a backend.</p>
+      <form id="teamForm" class="form" novalidate>
+        <div class="field"><label for="teamName">Your name *</label><input id="teamName" type="text" maxlength="40"></div>
+        <div class="field"><label for="teamEvent">Event *</label><input id="teamEvent" type="text" maxlength="80"></div>
+        <div class="field"><label for="teamRole">Role you need *</label><select id="teamRole"></select></div>
+        <div class="field"><label for="teamSkills">Skills wanted (optional)</label><input id="teamSkills" type="text" maxlength="200"></div>
+        <div class="field full"><label for="teamMessage">Message * (10 to 300 characters)</label><textarea id="teamMessage" rows="3" maxlength="300"></textarea></div>
+        <div class="full"><button class="btn btn-primary" type="submit">Post request</button><p id="teamMessageOut" class="form-message" role="status"></p></div>
+      </form>
+      <div id="teamList" class="stack"></div>
+    </section>
+
+    <!-- RESOURCES -->
+    <section id="resources" class="container section" aria-labelledby="resourcesTitle">
+      <h2 id="resourcesTitle">Learning resources</h2>
+      <p class="notice">Links to well-known free learning sites. They open in a new tab; check them before relying on them.</p>
+      <label class="filter resource-filter">Topic<select id="resourceTag"></select></label>
+      <div id="resourceList" class="grid"></div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="container section" aria-labelledby="dashTitle">
+      <h2 id="dashTitle">Your dashboard</h2>
+      <div id="dashboardBody"></div>
+    </section>
+  </main>
+
+  <!-- MODAL: the built-in <dialog> element handles Esc key and focus for us -->
+  <dialog id="detailsDialog" aria-labelledby="modalTitle">
+    <div id="modalBody"></div>
+    <button id="closeModal" class="btn btn-outline" type="button">Close</button>
+  </dialog>
+
+  <!-- Toast messages are added here by showToast() in app.js -->
+  <div id="toastRegion" class="toast-region" role="status" aria-live="polite"></div>
+
+  <footer class="footer">
+    <div class="container">
+      <p><strong>CampusTech</strong> — Discover. Build. Compete.</p>
+      <p>A student project. All sample opportunities are fictional demo data.</p>
+    </div>
+  </footer>
+
+  <!-- Loaded last so all elements above already exist -->
+  <script src="js/events.js"></script>
+  <script src="js/features.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/student.js"></script>
+</body>
+</html>
