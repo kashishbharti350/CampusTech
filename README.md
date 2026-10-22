@@ -85,4 +85,4 @@ localStorage is per browser and can be cleared by the user. Sample deadlines are
 
 ## Author
 
-**Kashish**, Student Developer | Electronics and Communication Engineering
+**Kashish**, Student Developer | Electronics and Communication Engineering(2nd yr)
