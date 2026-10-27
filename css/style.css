@@ -150,7 +150,7 @@ dialog .btn { margin-top: 20px; }
 [hidden] { display: none !important; }
 .result-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
 .result-row .result-count { margin: 0; }
-.btn-small { padding: 6px 12px; font-size: 0.9rem; }
+.btn-small { padding: 7px 14px; font-size: 0.9rem; }
 .check { display: inline-flex; align-items: center; gap: 8px; font-size: 1rem; }
 .check input { width: 18px; height: 18px; accent-color: var(--primary); }
 .card.is-expired { opacity: 0.8; }
