@@ -1,3 +1,4 @@
+//steps to do
 // Creates every issue in docs/issues.json on your GitHub repo using the GitHub CLI.
 // Setup once:  install https://cli.github.com/  then run  gh auth login
 // Preview:     node scripts/create-issues.js --dry-run
