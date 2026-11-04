@@ -7,15 +7,7 @@
   --border: #dcdfef;
   --primary: #5b3df5;      /* indigo-purple */
   --primary-dark: #4527d4;
-  --navy: #12204a;         /* Stage 2: navy + purple identity */
-  --soft: #ece4ff;        
-  --ok: #17794a;
-  --warn: #a45a00;
-  --bad: #b3261e;
-  --shadow: 0 2px 10px rgba(40, 30, 90, 0.08);
-}
-
-/* Dark theme: JavaScript sets data-theme="dark" on <html> */
+  --navy: #12204a;         
 [data-theme="dark"] {
   --bg: #0c1124;
   --surface: #151c38;
