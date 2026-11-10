@@ -1,10 +1,11 @@
+import { CATEGORIES, LEVELS, getDaysLeft, compareByDeadline, parseSkills } from "./events.js";
 // js/features.js: pure logic for the student features (no HTML, so Node can test it).
 // Needs events.js loaded first (CATEGORIES, LEVELS, getDaysLeft, compareByDeadline, parseSkills).
-const STATUSES = ["Interested", "Preparing", "Applied", "Interview", "Accepted", "Rejected"];
-const TEAM_ROLES = ["Frontend", "Backend", "Designer", "Hardware / Embedded", "Data / AI", "Any role"];
+export const STATUSES = ["Interested", "Preparing", "Applied", "Interview", "Accepted", "Rejected"];
+export const TEAM_ROLES = ["Frontend", "Backend", "Designer", "Hardware / Embedded", "Data / AI", "Any role"];
 
 // ---- Profile + recommendations ----
-function sanitizeProfile(p) {
+export function sanitizeProfile(p) {
   const out = { categories: [], skills: [], level: "All levels" };
   if (!p || typeof p !== "object") return out;
   if (Array.isArray(p.categories)) out.categories = p.categories.filter(function (c) { return CATEGORIES.includes(c); });
@@ -17,7 +18,7 @@ function sanitizeProfile(p) {
 }
 
 // Points: +3 for a liked category, +2 per shared skill, +1 level bonus (only if something else matched).
-function scoreEvent(event, profile) {
+export function scoreEvent(event, profile) {
   const reasons = [];
   let score = 0;
   if (profile.categories.includes(event.category)) { score += 3; reasons.push("matches your interest in " + event.category); }
@@ -30,7 +31,7 @@ function scoreEvent(event, profile) {
   return { score: score, reasons: reasons };
 }
 
-function recommendEvents(events, profile, limit) {
+export function recommendEvents(events, profile, limit) {
   return events.filter(function (e) { return getDaysLeft(e.deadline) >= 0; })   // never recommend expired events
     .map(function (e) { return Object.assign({ event: e }, scoreEvent(e, profile)); })
     .filter(function (r) { return r.score > 0; })
@@ -39,19 +40,19 @@ function recommendEvents(events, profile, limit) {
 }
 
 // ---- Application tracker + checklist ----
-const CHECKLISTS = {
+export const CHECKLISTS = {
   "Hackathons": ["Find or form a team", "Pick a project idea", "Set up GitHub and your dev tools"],
   "Coding Contests": ["Practice past problems", "Check the allowed languages", "Test your internet and setup"],
   "Workshops": ["Install the required tools", "Review the prerequisites", "Prepare questions to ask"],
   "Internships": ["Update your resume", "Clean up your GitHub or portfolio", "Draft a short cover letter"],
   "Other Opportunities": ["Check the eligibility carefully", "Gather any documents needed"]
 };
-function getChecklistItems(event) {
+export function getChecklistItems(event) {
   return ["Read the rules and eligibility", "Add the deadline to your calendar"]
     .concat(CHECKLISTS[event.category] || [], ["Submit before the deadline"]);
 }
 
-function sanitizeTracker(obj, validIds) {
+export function sanitizeTracker(obj, validIds) {
   const out = {};
   if (!obj || typeof obj !== "object" || Array.isArray(obj)) return out;
   Object.keys(obj).forEach(function (id) {
@@ -60,7 +61,7 @@ function sanitizeTracker(obj, validIds) {
   return out;
 }
 
-function sanitizeChecks(obj, events) {
+export function sanitizeChecks(obj, events) {
   const out = {};
   if (!obj || typeof obj !== "object" || Array.isArray(obj)) return out;
   events.forEach(function (event) {
@@ -74,7 +75,7 @@ function sanitizeChecks(obj, events) {
 }
 
 // ---- Dashboard numbers ----
-function computeStats(events, savedIds, tracker) {
+export function computeStats(events, savedIds, tracker) {
   const stats = { total: events.length, open: 0, expired: 0, free: 0, saved: savedIds.length, tracked: 0, byCategory: {}, byMode: {}, byStatus: {} };
   STATUSES.forEach(function (s) { stats.byStatus[s] = 0; });
   events.forEach(function (e) {
@@ -88,7 +89,7 @@ function computeStats(events, savedIds, tracker) {
 }
 
 // ---- Sharing ----
-function buildShareText(event) {
+export function buildShareText(event) {
   const lines = [event.title + " (" + event.category + ", " + event.mode + ")", "Deadline: " + event.deadline];
   if (event.source === "demo") lines.push("Note: sample listing from CampusTech, not a verified real event.");
   if (event.url) lines.push("Apply: " + event.url);
@@ -96,7 +97,7 @@ function buildShareText(event) {
 }
 
 // ---- Team finder (local only) ----
-function validateTeamPost(v) {
+export function validateTeamPost(v) {
   const errors = [];
   const name = String(v.name || "").trim();
   const eventTitle = String(v.eventTitle || "").trim();
@@ -108,15 +109,15 @@ function validateTeamPost(v) {
   const skills = String(v.skills || "").trim() === "" ? [] : parseSkills(v.skills);
   return { errors: errors, post: { id: "team-" + Date.now() + "-" + Math.floor(Math.random() * 1000), name: name, eventTitle: eventTitle, role: v.role, skills: skills, message: message, filled: false } };
 }
-function isValidTeamPost(p) {
+export function isValidTeamPost(p) {
   return !!p && typeof p === "object" && typeof p.id === "string" && typeof p.name === "string" && typeof p.eventTitle === "string"
     && typeof p.message === "string" && TEAM_ROLES.includes(p.role) && typeof p.filled === "boolean"
     && Array.isArray(p.skills) && p.skills.every(function (s) { return typeof s === "string"; });
 }
-function sanitizeTeams(list) { return (Array.isArray(list) ? list : []).filter(isValidTeamPost).slice(0, 50); }
+export function sanitizeTeams(list) { return (Array.isArray(list) ? list : []).filter(isValidTeamPost).slice(0, 50); }
 
 // ---- Learning resources: real, well-known sites. Check each link before relying on it. ----
-const RESOURCES = [
+export const RESOURCES = [
   { title: "MDN Learn Web Development", url: "https://developer.mozilla.org/en-US/docs/Learn", tags: ["HTML", "CSS", "JavaScript"], note: "Free, beginner-friendly web basics." },
   { title: "freeCodeCamp", url: "https://www.freecodecamp.org/", tags: ["JavaScript", "Python", "Web"], note: "Free interactive courses and projects." },
   { title: "CS50x (Harvard)", url: "https://cs50.harvard.edu/x/", tags: ["Programming", "Algorithms", "Python"], note: "Free intro computer science course." },
@@ -129,7 +130,7 @@ const RESOURCES = [
 ];
 
 // ---- "Did you mean?" for skill typos ----
-function editDistance(a, b) {
+export function editDistance(a, b) {
   a = a.toLowerCase(); b = b.toLowerCase();
   const row = [];
   for (let j = 0; j <= b.length; j++) row[j] = j;
@@ -145,7 +146,7 @@ function editDistance(a, b) {
   return row[b.length];
 }
 // For each profile skill that no listing mentions, find the closest known skill (if any is close enough).
-function suggestSkills(profileSkills, knownSkills) {
+export function suggestSkills(profileSkills, knownSkills) {
   const known = knownSkills.map(function (s) { return s.toLowerCase(); });
   return profileSkills.filter(function (s) { return !known.includes(s.toLowerCase()); }).map(function (typed) {
     const limit = Math.max(1, Math.floor(typed.length / 3));

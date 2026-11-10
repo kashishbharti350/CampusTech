@@ -1,23 +1,28 @@
-// Run with:  node tests/logic.test.js
-// Loads events.js and storage.js into a sandbox (no browser needed) and checks the pure logic.
-const fs = require("fs");
-const vm = require("vm");
-const assert = require("assert");
+// Run with:  npm test
+// Imports the logic modules directly (no browser, no sandbox needed).
+import assert from "node:assert";
+import * as ev from "../src/lib/events.js";
+import * as ft from "../src/lib/features.js";
+import * as storage from "../src/lib/storage.js";
 
-function load(file, extra) {
-  const ctx = vm.createContext(Object.assign({ console: console, URL: URL }, extra || {}));
-  vm.runInContext(fs.readFileSync(__dirname + "/../js/" + file, "utf8"), ctx);
-  return ctx;
-}
 let passed = 0;
 function same(a, b) { assert.strictEqual(JSON.stringify(a), JSON.stringify(b)); }  // compares contents only
 function test(name, fn) { fn(); passed++; console.log("  ok  " + name); }
 
-const ev = load("events.js");
-const ft = vm.createContext({ console: console, URL: URL });  // events.js + features.js share one sandbox
-["events.js", "features.js"].forEach(function (f) { vm.runInContext(fs.readFileSync(__dirname + "/../js/" + f, "utf8"), ft); });
-const runF = function (code) { return vm.runInContext(code, ft); };
-const run = function (code) { return vm.runInContext(code, ev); };
+const run = function (name) { return ev[name]; };
+const runF = function (name) { return ft[name] !== undefined ? ft[name] : ev[name]; };
+
+// Storage code reads the global localStorage when it runs, so we swap in a fake one
+// each time the tests touch it. load("storage.js", { localStorage }) keeps the old test lines working.
+function load(file, extra) {
+  const fakeStorage = extra.localStorage;
+  return new Proxy(storage, {
+    get(target, key) {
+      Object.defineProperty(globalThis, "localStorage", { value: fakeStorage, configurable: true, writable: true });
+      return target[key];
+    }
+  });
+}
 const goodEvent = { id: "user-1", source: "user", title: "My Event", category: "Workshops", mode: "Online",
   deadline: "2030-01-15", description: "A long enough description.", url: "https://example.com", skills: ["Git"], eligibility: "All", level: "Beginner", cost: "Free", registration: "open", organizer: "Club", prize: 0, teamSize: "Solo", rounds: ["One"] };
 

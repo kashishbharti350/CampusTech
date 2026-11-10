@@ -3,7 +3,7 @@
 // =====================================================
 
 // Helper: turns a Date into text like "2026-10-20" (the format used for deadlines)
-function formatDate(date) {
+export function formatDate(date) {
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return date.getFullYear() + "-" + month + "-" + day;
@@ -11,7 +11,7 @@ function formatDate(date) {
 
 // Helper: the date that is N days from today (negative N = in the past).
 // Demo deadlines use this so they always look fresh when you open the page.
-function daysFromToday(numberOfDays) {
+export function daysFromToday(numberOfDays) {
   const date = new Date();
   date.setDate(date.getDate() + numberOfDays);
   return formatDate(date);
@@ -20,7 +20,7 @@ function daysFromToday(numberOfDays) {
 // FICTIONAL demo data. url is empty on purpose: there are no real links.
 // To add a real opportunity, copy one object, set source: "real"
 // and paste a verified link into url.
-const demoEvents = [
+export const demoEvents = [
   { id: "demo-1", source: "demo", level: "Beginner", cost: "Free", registration: "open", organizer: "Demo Coding Club", prize: 50000, teamSize: "2 to 4", rounds: ["Idea submission", "Online build round", "Final demo"], title: "Demo Hack Sprint", category: "Hackathons", mode: "Online", deadline: daysFromToday(5),
     description: "A fictional 24-hour hackathon where teams build a small app that solves a campus problem.",
     skills: ["JavaScript", "Teamwork", "Prototyping"], eligibility: "Open to all undergraduate students.", url: "" },
@@ -51,19 +51,19 @@ const demoEvents = [
 // EVENT HELPERS
 // Pure functions: they need no HTML, so tests/logic.test.js can run them in Node.
 // =====================================================
-const CATEGORIES = ["Hackathons", "Coding Contests", "Workshops", "Internships", "Other Opportunities"];
-const MODES = ["Online", "Offline", "Hybrid"];
-const LEVELS = ["Beginner", "Intermediate", "Advanced", "All levels"];
-const COSTS = ["Free", "Paid", "Not specified"];
+export const CATEGORIES = ["Hackathons", "Coding Contests", "Workshops", "Internships", "Other Opportunities"];
+export const MODES = ["Online", "Offline", "Hybrid"];
+export const LEVELS = ["Beginner", "Intermediate", "Advanced", "All levels"];
+export const COSTS = ["Free", "Paid", "Not specified"];
 
 // Escapes < > & and both quote types, so text is safe inside HTML and inside attributes.
-function escapeHtml(text) {
+export function escapeHtml(text) {
   return String(text === undefined || text === null ? "" : text)
     .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
-function isValidUrl(text) {
+export function isValidUrl(text) {
   try {
     const url = new URL(text);
     return url.protocol === "http:" || url.protocol === "https:";
@@ -73,7 +73,7 @@ function isValidUrl(text) {
 }
 
 // True only for real dates written as YYYY-MM-DD ("2026-02-30" is rejected).
-function isValidDateString(text) {
+export function isValidDateString(text) {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(text);
   if (!match) return false;
   const date = new Date(+match[1], +match[2] - 1, +match[3]);
@@ -81,7 +81,7 @@ function isValidDateString(text) {
 }
 
 // Days until the deadline (negative = passed). NaN if the date is invalid.
-function getDaysLeft(deadline) {
+export function getDaysLeft(deadline) {
   if (!isValidDateString(deadline)) return NaN;
   const parts = deadline.split("-");
   const deadlineDate = new Date(parts[0], parts[1] - 1, parts[2]);
@@ -90,7 +90,7 @@ function getDaysLeft(deadline) {
   return Math.round((deadlineDate - today) / (1000 * 60 * 60 * 24));
 }
 
-function getDeadlineInfo(deadline) {
+export function getDeadlineInfo(deadline) {
   const daysLeft = getDaysLeft(deadline);
   if (Number.isNaN(daysLeft)) return { text: "Date unknown", cssClass: "unknown" };
   if (daysLeft < 0) return { text: "Expired", cssClass: "expired" };
@@ -101,7 +101,7 @@ function getDeadlineInfo(deadline) {
 }
 
 // Sort rule: upcoming deadlines first (soonest on top), expired ones at the bottom.
-function compareByDeadline(a, b) {
+export function compareByDeadline(a, b) {
   const aExpired = getDaysLeft(a.deadline) < 0;
   const bExpired = getDaysLeft(b.deadline) < 0;
   if (aExpired !== bExpired) return aExpired ? 1 : -1;
@@ -109,7 +109,7 @@ function compareByDeadline(a, b) {
 }
 
 // Checks an opportunity read back from localStorage. Broken or tampered records are dropped.
-function isValidEvent(e) {
+export function isValidEvent(e) {
   if (!e || typeof e !== "object") return false;
   const text = function (v) { return typeof v === "string" && v.trim() !== ""; };
   return text(e.id) && e.source === "user" && text(e.title) && text(e.description) && text(e.eligibility)
@@ -123,13 +123,13 @@ function isValidEvent(e) {
 
 // ---------- Stage 2 helpers ----------
 // Records saved by Stage 1 have no level/cost/registration, so give them safe defaults.
-function withDefaults(e) {
+export function withDefaults(e) {
   if (!e || typeof e !== "object") return e;
   return Object.assign({ level: "All levels", cost: "Not specified", registration: "open", organizer: "Added by you", prize: 0, teamSize: "Not specified", rounds: [] }, e);
 }
 
 // "Python, git ,Python" -> ["Python", "git"]. Max 8 skills, 30 characters each.
-function parseSkills(text) {
+export function parseSkills(text) {
   const list = [];
   String(text || "").split(",").forEach(function (part) {
     const skill = part.trim().slice(0, 30);
@@ -139,7 +139,7 @@ function parseSkills(text) {
 }
 
 // Registration status comes from the deadline plus the stored "registration" field.
-function getRegistrationStatus(event) {
+export function getRegistrationStatus(event) {
   const daysLeft = getDaysLeft(event.deadline);
   if (daysLeft < 0) return { text: "Registration closed", cssClass: "closed" };
   if (event.registration === "waitlist") return { text: "Waitlist only", cssClass: "waitlist" };
@@ -148,7 +148,7 @@ function getRegistrationStatus(event) {
 }
 
 // All filtering in one pure function. f holds the current choices; "All" means "no filter".
-function filterEvents(events, f) {
+export function filterEvents(events, f) {
   const search = String(f.search || "").trim().toLowerCase();
   return events.filter(function (event) {
     const daysLeft = getDaysLeft(event.deadline);
@@ -167,17 +167,17 @@ function filterEvents(events, f) {
 }
 
 // ---------- Unstop-style details ----------
-function formatPrize(amount) {
+export function formatPrize(amount) {
   return Number.isInteger(amount) && amount > 0 ? "\u20B9" + amount.toLocaleString("en-IN") : "No prize listed";
 }
-function parsePrize(text) { return Math.max(0, Math.min(10000000, parseInt(text, 10) || 0)); }
+export function parsePrize(text) { return Math.max(0, Math.min(10000000, parseInt(text, 10) || 0)); }
 
 // Calendar files (.ics) need \ ; , and new lines escaped.
-function icsText(text) {
+export function icsText(text) {
   return String(text).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
 }
 // An all-day calendar entry on the deadline date.
-function buildIcs(event, now) {
+export function buildIcs(event, now) {
   const p = event.deadline.split("-");
   const end = formatDate(new Date(+p[0], +p[1] - 1, +p[2] + 1)).replace(/-/g, "");
   const stamp = (now || new Date()).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
