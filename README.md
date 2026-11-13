@@ -19,7 +19,7 @@ A responsive web app that helps students find hackathons, coding contests, works
 | Team requests you post | Team requests visible to other students, real matching, messaging |
 | Share (device share sheet or copy to clipboard) | Verified live event data and registration links |
 
-## Project structure
+##  CampusTech Project structure
 
 ```text
 CampusTech/
