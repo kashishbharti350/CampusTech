@@ -83,6 +83,6 @@ Then on GitHub: **Settings > Pages > Build and deployment > Deploy from a branch
 
 localStorage is per browser and can be cleared by the user. Sample deadlines are generated relative to today's date so the demo always looks alive. Resource links point to well-known sites but should be checked before relying on them.
 
-## Author
+## Author.
 
 **Kashish Bharti**, Student frontend Developer | Electronics and Communication Engineering (2nd yr)
